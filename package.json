@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "install:go": "cd server && go mod tidy",
+    "install:extension": "cd extension && pnpm i",
+    "install": "concurrently \"npm run install:go\" \"npm run install:extension\"",
+    "dev:go": "cd server && go run . serve",
+    "dev:extension": "cd extension && pnpm run dev",
+    "dev": "concurrently \"npm run dev:go\" \"npm run dev:extension\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
