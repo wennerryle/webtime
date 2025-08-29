@@ -4,7 +4,7 @@ export const POCKETBASE_PASSWORD = "local:pocketbase_password";
 
 export function getPocketbaseURL() {
   return storage.getItem(POCKETBASE_URL_KEY, {
-    fallback: "http://127.0.0.1:8090",
+    fallback: "http://127.0.0.1:8090/_",
   });
 }
 

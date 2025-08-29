@@ -1,7 +1,17 @@
 import * as v from "valibot";
 
-export const MessageSchema = v.object({
+export const TimeSpendedSchema = v.object({
+  _tag: v.literal("time_spended_schema"),
   timeSpended: v.number(),
 });
 
-export type Message = v.InferInput<typeof MessageSchema>;
+export type TimeSpended = v.InferInput<typeof TimeSpendedSchema>;
+
+export const CredentialsChangedSchema = v.object({
+  _tag: v.literal("credentials_changed_schema"),
+  url: v.string(),
+  username: v.string(),
+  password: v.string(),
+});
+
+export type CredentialsChanged = v.InferInput<typeof CredentialsChangedSchema>;

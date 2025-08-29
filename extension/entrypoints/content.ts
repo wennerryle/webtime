@@ -1,13 +1,17 @@
 import { IsBusy } from "@/lib/isBusy";
+import { type TimeSpended } from "@/lib/Message";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
   main() {
     new IsBusy({
-      onActiveEnd(durationMs) {
-        console.log(JSON.stringify({ durationMs }, null, 2));
+      onActiveEnd(timeSpendedMs) {
+        browser.runtime.sendMessage<TimeSpended>({
+          _tag: "time_spended_schema",
+          timeSpended: timeSpendedMs / 1000,
+        });
       },
-      timeout: 10_000,
+      detectVisibilityChanges: true,
     });
   },
   runAt: "document_start",
