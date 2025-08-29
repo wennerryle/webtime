@@ -1,12 +1,13 @@
-import { IsIdle } from "@/lib/isIdle";
+import { IsBusy } from "@/lib/isBusy";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
   main() {
-    const isIdle = new IsIdle({ timeout: 2000, detectVisibilityChanges: true });
-
-    isIdle.current.subscribe((it) => {
-      console.log(JSON.stringify({ isIdle: it }, null, 2));
+    new IsBusy({
+      onActiveEnd(durationMs) {
+        console.log(JSON.stringify({ durationMs }, null, 2));
+      },
+      timeout: 10_000,
     });
   },
   runAt: "document_start",

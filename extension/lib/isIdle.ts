@@ -11,7 +11,7 @@ const DEFAULT_EVENTS = [
   "scroll",
 ] satisfies WindowEvent[];
 
-interface IsIdleOptions {
+export interface IsIdleOptions {
   /**
    * The events that should set the idle state to `true`
    *
@@ -22,7 +22,7 @@ interface IsIdleOptions {
   /**
    * The timeout in milliseconds before the idle state is set to `true`. Defaults to 60 seconds.
    *
-   * @default 60000
+   * @default 60_000
    */
   timeout?: number;
 
