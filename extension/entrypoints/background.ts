@@ -24,7 +24,7 @@ export default defineBackground(() => {
     if (it !== null) {
       pb = new PocketBase(it.url);
 
-      pb.collection("users").authWithPassword(it.username, it.password);
+      pb.collection("_superusers").authWithPassword(it.username, it.password);
     }
   });
 
