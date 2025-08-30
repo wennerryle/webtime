@@ -1,4 +1,6 @@
-# [spec draft] Time logger for browser tabs with NOT IDLE time
+# Time logger for browser tabs with NOT IDLE time
+
+![Dashboard Preview](./assets/dashboard-preview.png "Dashboard Preview") ![Popup Preview](./assets/popup-preview.png "Popup Preview")
 
 ## Why?
 
@@ -28,14 +30,15 @@ And export to CSV for future analyzing.
 
 ### statistics
 
+- id
 - URL
+- createdAt
 - Page title, like: "Cats picture - Searching in Google"
 - Amount of time in seconds
 
-## Server requirements
+## Versions
 
-Can be done through pocketbase:
-
-https://pocketbase.io/docs/
-
-- downloading statistics table in CSV format
+- fairy-tails (v0.4)
+| Ready to use really simple version, that use pocketbase as server
+| Not ready CSV imports, and by this reason you have to export data from
+| sqlite file of pocketbase directly
