@@ -4,19 +4,41 @@ import {
   type TimeSpended,
   type CredentialsChanged,
 } from "@/lib/Message";
-import { getCredentials } from "@/lib/Settings";
+import {
+  getCredentials,
+  setPocketbasePassword,
+  setPocketbaseURL,
+  setPocketbaseUsername,
+} from "@/lib/Settings";
 import * as v from "valibot";
+import PocketBase from "pocketbase";
+
+const StatisticsCollectionName = "site_statistics";
 
 type MessageSender = globalThis.Browser.runtime.MessageSender;
 
-export default defineBackground(async () => {
-  let credentials = await getCredentials();
+export default defineBackground(() => {
+  let pb = new PocketBase("");
 
-  async function credentialsChangedHandler({
-    _tag,
-    ...message
-  }: CredentialsChanged) {
-    credentials = { ...credentials, ...message };
+  getCredentials().then((it) => {
+    if (it !== null) {
+      pb = new PocketBase(it.url);
+
+      pb.collection("users").authWithPassword(it.username, it.password);
+    }
+  });
+
+  async function credentialsChangedHandler(message: CredentialsChanged) {
+    pb = new PocketBase(message.url);
+
+    pb.collection("_superusers").authWithPassword(
+      message.username,
+      message.password
+    );
+
+    setPocketbasePassword(message.password);
+    setPocketbaseURL(message.url);
+    setPocketbaseUsername(message.username);
   }
 
   async function timeSpandedHandler(
@@ -26,9 +48,21 @@ export default defineBackground(async () => {
     const { title, url } = sender.tab!;
 
     console.log({ timeSpended, title, url });
+
+    try {
+      const result = await pb.collection(StatisticsCollectionName).create({
+        url,
+        title,
+        secondsSpended: timeSpended,
+      });
+
+      console.log(result);
+    } catch (er) {
+      console.log(er);
+    }
   }
 
-  browser.runtime.onMessage.addListener((message, sender, sendResult) => {
+  browser.runtime.onMessage.addListener((message, sender) => {
     const timeSpanded = v.safeParse(TimeSpendedSchema, message);
 
     if (timeSpanded.success) {

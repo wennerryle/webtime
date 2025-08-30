@@ -9,9 +9,9 @@ export type TimeSpended = v.InferInput<typeof TimeSpendedSchema>;
 
 export const CredentialsChangedSchema = v.object({
   _tag: v.literal("credentials_changed_schema"),
-  url: v.string(),
-  username: v.string(),
-  password: v.string(),
+  url: v.string("Please enter your Pocketbase URL"),
+  username: v.string("Please enter your nickname"),
+  password: v.string("Please enter your password"),
 });
 
 export type CredentialsChanged = v.InferInput<typeof CredentialsChangedSchema>;

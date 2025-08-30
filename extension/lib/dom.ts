@@ -10,8 +10,6 @@ export function form2object(it: HTMLFormElement) {
   const entries: Record<string, FormDataEntryValue | undefined> =
     Object.fromEntries(new FormData(it));
 
-  console.log(JSON.stringify(entries), it);
-
   for (const key in entries) {
     if (entries[key] === "") {
       entries[key] = undefined;

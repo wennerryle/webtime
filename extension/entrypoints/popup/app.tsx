@@ -1,8 +1,8 @@
-import { getPocketbaseURL } from "@/lib/Settings";
+import { getCredentials, getPocketbaseURL } from "@/lib/Settings";
 import { useSignal } from "@preact/signals";
 import { ExtensionLink } from "@/components/ExtensionLink";
 import { form2object, stopEvent } from "@/lib/dom";
-import { CredentialsChangedSchema } from "@/lib/Message";
+import { CredentialsChanged, CredentialsChangedSchema } from "@/lib/Message";
 import * as v from "valibot";
 
 async function submitHandler(
@@ -18,11 +18,11 @@ async function submitHandler(
     entries
   );
 
-  console.log({ entries });
-
   if (!success) {
     return issues.map((it) => it.message);
   }
+
+  await browser.runtime.sendMessage(output);
 
   return null;
 }
@@ -31,8 +31,12 @@ export function App() {
   const dashboardURL = useSignal("");
   const button = useSignal("Save");
   const issues = useSignal<null | string[]>(null);
+  const credentials = useSignal<CredentialsChanged | null>(null);
 
   getPocketbaseURL().then((it) => (dashboardURL.value = it));
+  getCredentials().then((it) => {
+    credentials.value = it;
+  });
 
   async function onSubmit(this: HTMLFormElement, event: SubmitEvent) {
     button.value = "Upload..";
@@ -43,7 +47,7 @@ export function App() {
     issues.value = result;
 
     if (result !== null) {
-      button.value = "Fix your issues!";
+      button.value = "Click here if you done";
     } else {
       button.value = "Successfully updated!";
     }
@@ -64,7 +68,9 @@ export function App() {
             </ExtensionLink>
           </li>
           <li>
-            <ExtensionLink href={dashboardURL.value}>Dashboard</ExtensionLink>
+            <ExtensionLink href={dashboardURL.value + "_"}>
+              Dashboard
+            </ExtensionLink>
           </li>
         </ul>
       </nav>
@@ -79,10 +85,20 @@ export function App() {
             <input
               name="url"
               placeholder="Pocketbase URL"
-              defaultValue={"http://127.0.0.1:8090/_"}
+              defaultValue={credentials.value?.url ?? "http://127.0.0.1:8090/"}
             />
-            <input name="username" placeholder="Email" autocomplete="email" />
-            <input name="password" type="password" placeholder="Password" />
+            <input
+              name="username"
+              placeholder="Email"
+              autocomplete="email"
+              defaultValue={credentials.value?.username}
+            />
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              defaultValue={credentials.value?.password}
+            />
             {issues.value && (
               <article>
                 <header style="background-color: #efa55b">

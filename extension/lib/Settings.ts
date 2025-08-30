@@ -1,3 +1,5 @@
+import { CredentialsChanged } from "./Message";
+
 export const POCKETBASE_URL_KEY = "local:pocketbase_url";
 export const POCKETBASE_USER = "local:pocketbase_user";
 export const POCKETBASE_PASSWORD = "local:pocketbase_password";
@@ -33,14 +35,17 @@ interface PocketBaseCredentials {
   password: string;
 }
 
-export async function getCredentials(): Promise<PocketBaseCredentials | null> {
-  const [username, password] = await Promise.all([
+export async function getCredentials(): Promise<CredentialsChanged | null> {
+  const [username, password, url] = await Promise.all([
     getPocketbaseUser(),
     getPocketbasePassword(),
+    getPocketbaseURL(),
   ]);
 
   if (username !== null && password !== null) {
     return {
+      _tag: "credentials_changed_schema",
+      url,
       password,
       username,
     };
